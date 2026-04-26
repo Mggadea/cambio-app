@@ -73,14 +73,16 @@ function ConverterCard({
               }
               onChange={(event) => onAmountChange(event.target.value)}
             />
-            {amountErrorMessage ? (
-              <span
-                id="amount-error-message"
-                className="block text-sm font-medium text-red-600"
-              >
-                {amountErrorMessage}
-              </span>
-            ) : null}
+            <div className="min-h-0 md:min-h-5">
+              {amountErrorMessage ? (
+                <span
+                  id="amount-error-message"
+                  className="block text-sm font-medium leading-5 text-red-600"
+                >
+                  {amountErrorMessage}
+                </span>
+              ) : null}
+            </div>
           </label>
 
           <label className="space-y-2">
@@ -98,23 +100,27 @@ function ConverterCard({
                 </option>
               ))}
             </Select>
+            <div className="min-h-0 md:min-h-5" aria-hidden="true" />
           </label>
 
-          <button
-            type="button"
-            className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-indigo-500 bg-white text-xl font-bold text-indigo-700 transition hover:border-indigo-400 hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-60"
-            aria-label="Switch currencies"
-            disabled={isCurrencySelectionDisabled}
-            onClick={onSwapCurrencies}
-          >
-            <Image
-              src={swapImage}
-              alt=""
-              className="mix-blend-multiply"
-              width={24}
-              height={24}
-            />
-          </button>
+          <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-indigo-500 bg-white text-xl font-bold text-indigo-700 transition hover:border-indigo-400 hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-60"
+              aria-label="Switch currencies"
+              disabled={isCurrencySelectionDisabled}
+              onClick={onSwapCurrencies}
+            >
+              <Image
+                src={swapImage}
+                alt=""
+                className="mix-blend-multiply"
+                width={24}
+                height={24}
+              />
+            </button>
+            <div className="min-h-0 md:min-h-5" aria-hidden="true" />
+          </div>
 
           <label className="space-y-2">
             <span className="block text-sm font-semibold text-slate-500">
@@ -131,6 +137,7 @@ function ConverterCard({
                 </option>
               ))}
             </Select>
+            <div className="min-h-0 md:min-h-5" aria-hidden="true" />
           </label>
         </div>
 
