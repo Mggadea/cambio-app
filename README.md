@@ -1,36 +1,176 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cambio App
 
-## Getting Started
+Aplicación de conversión de divisas construida con Next.js, React, TypeScript y TanStack Query. La interfaz consume datos de VAT Comply para listar monedas soportadas y obtener tasas de cambio de referencia.
 
-First, run the development server:
+## Descripción
+
+La aplicación permite:
+
+- Seleccionar una moneda de origen y una moneda de destino.
+- Ingresar un monto y ver la conversión en tiempo real.
+- Mostrar el nombre completo de las monedas seleccionadas.
+- Mostrar la fecha de referencia entregada por la API.
+- Consultar las monedas soportadas desde VAT Comply sin exponer directamente esa integración en la UI.
+
+## Tecnologías
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- TanStack Query
+- VAT Comply API
+
+## Requisitos
+
+- Node.js 20 o superior
+- npm
+
+## Instalación
+
+1. Clona el repositorio.
+2. Entra al proyecto.
+3. Instala las dependencias.
+
+```bash
+npm install
+```
+
+## Ejecutar en desarrollo
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Después abre el navegador en la URL que muestre Next.js en consola. Normalmente será:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Si el puerto `3000` ya está ocupado, Next.js usará otro puerto disponible automáticamente.
 
-## Learn More
+## Build de producción
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Ejecutar la build de producción
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run start
+```
 
-## Deploy on Vercel
+## Lint
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run lint
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Scripts disponibles
+
+- `npm run dev`: inicia el servidor de desarrollo.
+- `npm run build`: genera la build de producción.
+- `npm run start`: ejecuta la build generada.
+- `npm run lint`: ejecuta ESLint.
+
+
+## Fuente de datos
+
+La app usa VAT Comply como fuente externa de datos:
+
+- Base URL externa: `https://api.vatcomply.com`
+- No requiere API key.
+- La lista de monedas soportadas depende de la respuesta real de VAT Comply.
+
+La integración se encapsula en:
+
+- `src/lib/vatcomply.ts`
+
+## Endpoints internos
+
+La UI no consume VAT Comply directamente. Usa rutas internas de Next.js:
+
+- `/api/currencies`: devuelve la lista de monedas soportadas.
+- `/api/exchange-rates?base=USD&symbols=EUR`: devuelve la tasa de cambio solicitada.
+
+Esto permite mantener la lógica de integración desacoplada de los componentes presentacionales.
+
+## Arquitectura
+
+El proyecto sigue una separación de responsabilidades basada en patrón contenedor/presentacional y principios SOLID.
+
+- Los contenedores manejan estado, queries y composición de datos.
+- Los componentes presentacionales solo renderizan props.
+- Los helpers concentran formato y lógica pura reutilizable.
+- Las constantes se mantienen separadas para limpiar los componentes.
+
+### Ejemplo de organización
+
+- `src/app/home/containers`: lógica de estado y orquestación.
+- `src/app/home/components`: componentes visuales de la pantalla.
+- `src/app/home/helpers`: funciones puras para formato y transformación.
+- `src/app/home/constants`: constantes del módulo.
+- `src/components/ui`: componentes UI reutilizables.
+
+## Flujo principal
+
+1. La aplicación consulta las monedas soportadas.
+2. El usuario selecciona origen, destino e ingresa un monto.
+3. TanStack Query solicita la tasa correspondiente.
+4. El contenedor transforma la respuesta.
+5. Los componentes presentacionales renderizan el resultado.
+
+## Componentes reutilizables actuales
+
+- `InputField`: campo reutilizable con adornos opcionales.
+- `Input`: input base reutilizable.
+- `Select`: select reutilizable.
+- `Card`: contenedor visual reutilizable.
+
+## Información útil
+
+- La fecha mostrada en la conversión usa la fecha entregada por la API de VAT Comply.
+- Como la API entrega una fecha y no una hora exacta, la UI muestra `00:00 UTC` como referencia del día de la tasa.
+- No todas las monedas del mundo están soportadas por VAT Comply. La aplicación solo muestra las monedas válidas para esa API.
+
+## Posibles advertencias al ejecutar
+
+Durante `npm run dev` o `npm run build`, Next.js puede mostrar una advertencia relacionada con múltiples lockfiles y la inferencia del root del workspace. Esa advertencia no impide que la app funcione, pero conviene corregirla si quieres una configuración más limpia.
+
+## Estructura base del proyecto
+
+```text
+src/
+	app/
+		api/
+			currencies/
+			exchange-rates/
+		home/
+			components/
+			constants/
+			containers/
+			helpers/
+			hooks/
+	components/
+		providers/
+		ui/
+	lib/
+```
+
+## Verificación rápida
+
+Si quieres comprobar que todo está correcto después de instalar dependencias:
+
+```bash
+npm run lint
+npm run build
+```
+
+## Próximas mejoras sugeridas
+
+- Agregar soporte para historial por fecha.
+- Agregar localización por idioma o región.
+- Mejorar estados vacíos y de error.
+- Añadir pruebas unitarias para helpers y contenedores.
