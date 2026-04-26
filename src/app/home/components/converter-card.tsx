@@ -1,6 +1,8 @@
+import Image from "next/image";
 import Card from "@/components/ui/card";
 import InputField from "@/components/ui/input-field";
 import Select from "@/components/ui/select";
+import swapImage from "@/assets/swap.png";
 import type { CurrencyOption } from "@/lib/vatcomply";
 
 interface ConverterCardProps {
@@ -86,7 +88,13 @@ function ConverterCard({
             disabled={isCurrencySelectionDisabled}
             onClick={onSwapCurrencies}
           >
-            ⇄
+            <Image
+              src={swapImage}
+              alt=""
+              className="mix-blend-multiply"
+              width={24}
+              height={24}
+            />
           </button>
 
           <label className="space-y-2">
