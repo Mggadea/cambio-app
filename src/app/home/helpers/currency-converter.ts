@@ -5,6 +5,26 @@ import {
 } from "../constants/currency-converter";
 import type { CurrencyOption, VatComplyRatesResponse } from "@/lib/vatcomply";
 
+export function getAmountValidationMessage(amount: string) {
+  const normalizedAmount = amount.trim();
+
+  if (normalizedAmount.length === 0) {
+    return "Enter an amount.";
+  }
+
+  const parsedAmount = Number(normalizedAmount);
+
+  if (!Number.isFinite(parsedAmount)) {
+    return "Enter a valid number.";
+  }
+
+  if (parsedAmount < 0) {
+    return "Amount cannot be negative.";
+  }
+
+  return undefined;
+}
+
 export function getResolvedCurrencyCode(
   currencies: CurrencyOption[],
   preferredCodes: string[],
@@ -50,9 +70,9 @@ export function formatRateDate(rateDate: string) {
 }
 
 export function parseAmount(amount: string) {
-  const parsedAmount = Number.parseFloat(amount);
+  const parsedAmount = Number(amount);
 
-  return Number.isFinite(parsedAmount) ? parsedAmount : 0;
+  return Number.isFinite(parsedAmount) && parsedAmount >= 0 ? parsedAmount : 0;
 }
 
 export function findCurrency(

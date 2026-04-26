@@ -8,6 +8,7 @@ import {
   DEFAULT_AMOUNT,
   DEFAULT_FROM_CURRENCY,
   DEFAULT_TO_CURRENCY,
+  EMPTY_CONVERSION_RESULT,
   PAGE_TITLE,
 } from "../constants/currency-converter";
 import {
@@ -17,6 +18,7 @@ import {
   buildHeroTitle,
   buildHeroTitleDetail,
   findCurrency,
+  getAmountValidationMessage,
   getResolvedCurrencyCode,
   getResolvedRate,
   parseAmount,
@@ -61,18 +63,21 @@ function HomePageContainer() {
     isLoading: isRatesLoading,
   } = useExchangeRatesQuery(fromCurrency, toCurrency);
 
+  const amountValidationMessage = getAmountValidationMessage(amount);
   const parsedAmount = parseAmount(amount);
   const rate = getResolvedRate(fromCurrency, toCurrency, ratesData);
   const fromCurrencyOption = findCurrency(currencies, fromCurrency);
   const toCurrencyOption = findCurrency(currencies, toCurrency);
-  const conversionResult = buildConversionResult(
-    parsedAmount,
-    rate,
-    fromCurrencyOption?.name ?? fromCurrency,
-    toCurrencyOption?.name ?? toCurrency,
-    fromCurrencyOption?.decimalPlaces ?? 2,
-    toCurrencyOption?.decimalPlaces ?? 2,
-  );
+  const conversionResult = amountValidationMessage
+    ? EMPTY_CONVERSION_RESULT
+    : buildConversionResult(
+        parsedAmount,
+        rate,
+        fromCurrencyOption?.name ?? fromCurrency,
+        toCurrencyOption?.name ?? toCurrency,
+        fromCurrencyOption?.decimalPlaces ?? 2,
+        toCurrencyOption?.decimalPlaces ?? 2,
+      );
   const conversionSummary = buildConversionSummary(
     fromCurrencyOption?.name ?? fromCurrency,
     toCurrencyOption?.name ?? toCurrency,
@@ -83,7 +88,8 @@ function HomePageContainer() {
     rate,
     toCurrency
   );
-  const errorMessage = currenciesError?.message ?? ratesError?.message;
+  const errorMessage =
+    amountValidationMessage ?? currenciesError?.message ?? ratesError?.message;
   const isLoading =
     isCurrenciesLoading || (fromCurrency !== toCurrency && isRatesLoading);
 
@@ -99,6 +105,7 @@ function HomePageContainer() {
       >
         <ConverterCard
           amount={amount}
+          amountErrorMessage={amountValidationMessage}
           amountSymbol={fromCurrencyOption?.symbol ?? fromCurrency}
           conversionSummary={conversionSummary}
           conversionResult={conversionResult}

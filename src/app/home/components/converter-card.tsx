@@ -7,6 +7,7 @@ import type { CurrencyOption } from "@/lib/vatcomply";
 
 interface ConverterCardProps {
   amount: string;
+  amountErrorMessage?: string;
   amountSymbol: string;
   conversionSummary: string;
   conversionResult: string;
@@ -24,6 +25,7 @@ interface ConverterCardProps {
 
 function ConverterCard({
   amount,
+  amountErrorMessage,
   amountSymbol,
   conversionSummary,
   conversionResult,
@@ -52,9 +54,18 @@ function ConverterCard({
             <InputField
               type="number"
               value={amount}
+              aria-describedby={
+                amountErrorMessage ? "amount-error-message" : undefined
+              }
+              aria-invalid={Boolean(amountErrorMessage)}
               min="0"
               step="0.01"
               inputMode="decimal"
+              containerClassName={
+                amountErrorMessage
+                  ? "border-red-300 focus-within:border-red-500 focus-within:ring-red-100"
+                  : ""
+              }
               startAdornment={
                 <span className="text-lg font-semibold text-slate-500">
                   {amountSymbol}
@@ -62,6 +73,14 @@ function ConverterCard({
               }
               onChange={(event) => onAmountChange(event.target.value)}
             />
+            {amountErrorMessage ? (
+              <span
+                id="amount-error-message"
+                className="block text-sm font-medium text-red-600"
+              >
+                {amountErrorMessage}
+              </span>
+            ) : null}
           </label>
 
           <label className="space-y-2">
