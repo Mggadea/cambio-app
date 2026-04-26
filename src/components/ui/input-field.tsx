@@ -20,7 +20,7 @@ function InputField({
 
   return (
     <div
-      className={`flex items-center gap-3 h-12 rounded-xl border border-slate-200 bg-white px-2 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-100 ${containerClassName}`}
+      className={`flex items-center gap-3 h-12 rounded-lg border border-slate-200 bg-white px-2 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-100 ${containerClassName}`}
     >
       {startAdornment ? <div className="shrink-0">{startAdornment}</div> : null}
       <input
