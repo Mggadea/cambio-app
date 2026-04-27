@@ -185,3 +185,18 @@ Tailwind CSS permite escribir estilos directamente en el JSX usando clases utili
 ### TanStack Query
 
 TanStack Query (React Query) se eligió para manejar las peticiones HTTP del lado del cliente. Provee caché automático, estados de carga y error, y evita peticiones redundantes cuando los datos ya están disponibles. En esta aplicación se usa para solicitar las tasas de cambio al endpoint interno cada vez que cambia la combinación de monedas, sin necesidad de manejar ese estado manualmente con `useState` y `useEffect`.
+
+### Patrón contenedor/presentacional
+
+El proyecto separa los componentes en dos roles bien definidos:
+
+- **Contenedores**: se encargan de obtener datos, manejar estado y orquestar la lógica. No tienen responsabilidad visual directa.
+- **Componentes presentacionales**: solo reciben props y renderizan UI. No saben de dónde vienen los datos ni cómo se obtienen.
+
+Las ventajas de esta separación son:
+
+- **Testeabilidad**: los componentes presentacionales son funciones puras de sus props, lo que los hace fáciles de testear sin necesidad de mockear queries ni contextos.
+- **Reutilización**: un mismo componente visual puede usarse con distintas fuentes de datos simplemente conectándolo a otro contenedor.
+- **Legibilidad**: al leer un componente presentacional solo hay que entender su UI, sin lógica de negocio mezclada.
+- **Mantenibilidad**: los cambios en la lógica de obtención de datos se aíslan en los contenedores y no afectan los componentes visuales, y viceversa.
+
