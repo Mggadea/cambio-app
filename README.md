@@ -8,6 +8,7 @@ La aplicación permite:
 
 - Seleccionar una moneda de origen y una moneda de destino.
 - Ingresar un monto y ver la conversión en tiempo real.
+- Validar si es un monto valido (no negativo).
 - Mostrar el nombre completo de las monedas seleccionadas.
 - Mostrar la fecha de referencia entregada por la API.
 - Consultar las monedas soportadas desde VAT Comply sin exponer directamente esa integración en la UI.
@@ -125,7 +126,6 @@ El proyecto sigue una separación de responsabilidades basada en patrón contene
 ## Componentes reutilizables actuales
 
 - `InputField`: campo reutilizable con adornos opcionales.
-- `Input`: input base reutilizable.
 - `Select`: select reutilizable.
 - `Card`: contenedor visual reutilizable.
 
@@ -137,7 +137,7 @@ El proyecto sigue una separación de responsabilidades basada en patrón contene
 
 ## Posibles advertencias al ejecutar
 
-Durante `npm run dev` o `npm run build`, Next.js puede mostrar una advertencia relacionada con múltiples lockfiles y la inferencia del root del workspace. Esa advertencia no impide que la app funcione, pero conviene corregirla si quieres una configuración más limpia.
+Durante `npm run dev` o `npm run build`, Next.js puede mostrar una advertencia relacionada con múltiples lockfiles y la inferencia del root del workspace. Esa advertencia no impide que la app funcione, pero conviene corregirla si querés una configuración más limpia.
 
 ## Estructura base del proyecto
 
@@ -161,16 +161,27 @@ src/
 
 ## Verificación rápida
 
-Si quieres comprobar que todo está correcto después de instalar dependencias:
+Si querés comprobar que todo está correcto después de instalar dependencias:
 
 ```bash
 npm run lint
 npm run build
 ```
 
-## Próximas mejoras sugeridas
+## Decisiones técnicas
 
-- Agregar soporte para historial por fecha.
-- Agregar localización por idioma o región.
-- Mejorar estados vacíos y de error.
-- Añadir pruebas unitarias para helpers y contenedores.
+### Next.js
+
+Se eligió Next.js como framework principal porque permite combinar rendering del lado del servidor con rutas API nativas. Las rutas `/api/currencies` y `/api/exchange-rates` se implementan directamente en el proyecto sin necesidad de un backend separado. Esto simplifica la infraestructura y centraliza la integración con VAT Comply en el servidor.
+
+### TypeScript
+
+El uso de TypeScript aporta tipado estático a toda la codebase. Las interfaces  como `VatComplyRatesResponse`, `CurrencyOption` y los props de los componentes definen contratos claros entre capas, detectan errores en tiempo de compilación y facilitan el mantenimiento si el proyecto fuera a crecer en un futuro.
+
+### Tailwind CSS
+
+Tailwind CSS permite escribir estilos directamente en el JSX usando clases utilitarias. Reduce la necesidad de archivos CSS separados, mantiene los estilos cerca del componente que los usa además de la facilidad de integración con el ecosistema de NextJS.
+
+### TanStack Query
+
+TanStack Query (React Query) se eligió para manejar las peticiones HTTP del lado del cliente. Provee caché automático, estados de carga y error, y evita peticiones redundantes cuando los datos ya están disponibles. En esta aplicación se usa para solicitar las tasas de cambio al endpoint interno cada vez que cambia la combinación de monedas, sin necesidad de manejar ese estado manualmente con `useState` y `useEffect`.
