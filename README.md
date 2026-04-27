@@ -2,6 +2,10 @@
 
 Aplicación de conversión de divisas construida con Next.js, React, TypeScript y TanStack Query. La interfaz consume datos de VAT Comply para listar monedas soportadas y obtener tasas de cambio de referencia.
 
+
+<img width="1679" height="794" alt="Screenshot 2026-04-27 at 1 31 52 PM" src="https://github.com/user-attachments/assets/0106cddd-4f8a-4d3f-bfa9-67eb812770dc" />
+
+
 ## Descripción
 
 La aplicación permite:
@@ -199,4 +203,8 @@ Las ventajas de esta separación son:
 - **Reutilización**: un mismo componente visual puede usarse con distintas fuentes de datos simplemente conectándolo a otro contenedor.
 - **Legibilidad**: al leer un componente presentacional solo hay que entender su UI, sin lógica de negocio mezclada.
 - **Mantenibilidad**: los cambios en la lógica de obtención de datos se aíslan en los contenedores y no afectan los componentes visuales, y viceversa.
+
+
+
+
 
