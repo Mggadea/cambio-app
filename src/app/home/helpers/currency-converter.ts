@@ -1,4 +1,6 @@
 import {
+  DEFAULT_FROM_CURRENCY,
+  DEFAULT_TO_CURRENCY,
   EMPTY_CONVERSION_RESULT,
   EMPTY_RATE_LABEL,
   LOCALE,
@@ -36,6 +38,29 @@ export function getResolvedCurrencyCode(
   }
 
   return currencies[0]?.code ?? "";
+}
+
+export function resolveCurrencyPair(
+  currencies: CurrencyOption[],
+  requestedFromCurrency = DEFAULT_FROM_CURRENCY,
+  requestedToCurrency = DEFAULT_TO_CURRENCY,
+) {
+  return {
+    fromCurrency:
+      currencies.length > 0
+        ? getResolvedCurrencyCode(currencies, [
+            requestedFromCurrency,
+            DEFAULT_FROM_CURRENCY,
+          ])
+        : requestedFromCurrency,
+    toCurrency:
+      currencies.length > 0
+        ? getResolvedCurrencyCode(currencies, [
+            requestedToCurrency,
+            DEFAULT_TO_CURRENCY,
+          ])
+        : requestedToCurrency,
+  };
 }
 
 export function formatDecimalAmount(amount: number, decimalPlaces: number) {

@@ -1,171 +1,50 @@
-import Image from "next/image";
 import Card from "@/components/ui/card";
-import InputField from "@/components/ui/input-field";
-import Select from "@/components/ui/select";
-import swapImage from "@/assets/swap.png";
-import type { CurrencyOption } from "@/lib/vatcomply";
+import ConversionMetaPanel from "./conversion-meta-panel";
+import ConversionResultPanel from "./conversion-result-panel";
+import ConverterAmountField from "./converter-amount-field";
+import CurrencyPairFields from "./currency-pair-fields";
+import type {
+  CurrencyConverterFormViewModel,
+  CurrencyConverterResultViewModel,
+} from "../hooks/use-currency-converter-data";
 
 interface ConverterCardProps {
-  amount: string;
-  amountErrorMessage?: string;
-  amountSymbol: string;
-  conversionSummary: string;
-  conversionResult: string;
-  currencies: CurrencyOption[];
-  errorMessage?: string;
-  exchangeRateLabel: string;
-  isLoading: boolean;
-  fromCurrency: string;
-  toCurrency: string;
-  onAmountChange: (value: string) => void;
-  onFromCurrencyChange: (currencyCode: string) => void;
-  onSwapCurrencies: () => void;
-  onToCurrencyChange: (currencyCode: string) => void;
+  form: CurrencyConverterFormViewModel;
+  result: CurrencyConverterResultViewModel;
 }
 
-function ConverterCard({
-  amount,
-  amountErrorMessage,
-  amountSymbol,
-  conversionSummary,
-  conversionResult,
-  currencies,
-  errorMessage,
-  exchangeRateLabel,
-  isLoading,
-
-  fromCurrency,
-  toCurrency,
-  onAmountChange,
-  onFromCurrencyChange,
-  onSwapCurrencies,
-  onToCurrencyChange,
-}: ConverterCardProps) {
-  const isCurrencySelectionDisabled = currencies.length === 0;
-
+function ConverterCard({ form, result }: ConverterCardProps) {
   return (
     <Card className="shadow-xl shadow-indigo-950/10">
       <div className="space-y-6">
         <div className="grid gap-3 md:grid-cols-[1.2fr_1fr_auto_1fr] md:items-end">
-          <label className="space-y-2">
-            <span className="block text-sm font-semibold text-slate-500">
-              Amount
-            </span>
-            <InputField
-              type="number"
-              value={amount}
-              aria-describedby={
-                amountErrorMessage ? "amount-error-message" : undefined
-              }
-              aria-invalid={Boolean(amountErrorMessage)}
-              min="0"
-              step="0.01"
-              inputMode="decimal"
-              containerClassName={
-                amountErrorMessage
-                  ? "border-red-300 focus-within:border-red-500 focus-within:ring-red-100"
-                  : ""
-              }
-              startAdornment={
-                <span className="text-lg font-semibold text-slate-500">
-                  {amountSymbol}
-                </span>
-              }
-              onChange={(event) => onAmountChange(event.target.value)}
-            />
-            <div className="min-h-0 md:min-h-5">
-              {amountErrorMessage ? (
-                <span
-                  id="amount-error-message"
-                  className="block text-sm font-medium leading-5 text-red-600"
-                >
-                  {amountErrorMessage}
-                </span>
-              ) : null}
-            </div>
-          </label>
+          <ConverterAmountField
+            amount={form.amount}
+            amountErrorMessage={form.amountErrorMessage}
+            amountSymbol={form.amountSymbol}
+            onAmountChange={form.onAmountChange}
+          />
 
-          <label className="space-y-2">
-            <span className="block text-sm font-semibold text-slate-500">
-              From
-            </span>
-            <Select
-              value={fromCurrency}
-              disabled={isCurrencySelectionDisabled}
-              onChange={(event) => onFromCurrencyChange(event.target.value)}
-            >
-              {currencies.map((currency) => (
-                <option key={currency.code} value={currency.code}>
-                  {currency.code} - {currency.name}
-                </option>
-              ))}
-            </Select>
-            <div className="min-h-0 md:min-h-5" aria-hidden="true" />
-          </label>
-
-          <div className="flex flex-col gap-2">
-            <button
-              type="button"
-              className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-indigo-500 bg-white text-xl font-bold text-indigo-700 transition hover:border-indigo-400 hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-60"
-              aria-label="Switch currencies"
-              disabled={isCurrencySelectionDisabled}
-              onClick={onSwapCurrencies}
-            >
-              <Image
-                src={swapImage}
-                alt=""
-                className="mix-blend-multiply"
-                width={24}
-                height={24}
-              />
-            </button>
-            <div className="min-h-0 md:min-h-5" aria-hidden="true" />
-          </div>
-
-          <label className="space-y-2">
-            <span className="block text-sm font-semibold text-slate-500">
-              To
-            </span>
-            <Select
-              value={toCurrency}
-              disabled={isCurrencySelectionDisabled}
-              onChange={(event) => onToCurrencyChange(event.target.value)}
-            >
-              {currencies.map((currency) => (
-                <option key={currency.code} value={currency.code}>
-                  {currency.code} - {currency.name}
-                </option>
-              ))}
-            </Select>
-            <div className="min-h-0 md:min-h-5" aria-hidden="true" />
-          </label>
+          <CurrencyPairFields
+            currencies={form.currencies}
+            fromCurrency={form.fromCurrency}
+            isDisabled={form.isCurrencySelectionDisabled}
+            onFromCurrencyChange={form.onFromCurrencyChange}
+            onSwapCurrencies={form.onSwapCurrencies}
+            onToCurrencyChange={form.onToCurrencyChange}
+            toCurrency={form.toCurrency}
+          />
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="rounded-2xl  px-6 py-8" aria-live="polite">
-            <p className="mt-3 whitespace-pre-line text-4xl font-bold leading-tight tracking-tight text-slate-950 md:text-5xl">
-              {isLoading && !errorMessage
-                ? "Loading rate..."
-                : conversionResult}
-            </p>
-            <p className="mt-3 text-base text-slate-600">
-              {errorMessage ?? exchangeRateLabel}
-            </p>
-          </div>
+          <ConversionResultPanel
+            conversionResult={result.conversionResult}
+            errorMessage={result.errorMessage}
+            exchangeRateLabel={result.exchangeRateLabel}
+            isLoading={result.isLoading}
+          />
 
-          <div className="flex flex-col gap-3 lg:pt-20">
-            <div className="h-min rounded-lg bg-indigo-200 p-6 shadow-none">
-              <p className="text-balance font-medium text-black ">
-                We use the mid-market rate for our Converter. This is for
-                informational purposes only. You will not receive this rate when
-                sending money.
-              </p>
-            </div>
-
-            <p className="px-1 text-sm font-medium text-slate-600">
-              {conversionSummary}
-            </p>
-          </div>
+          <ConversionMetaPanel conversionSummary={result.conversionSummary} />
         </div>
       </div>
     </Card>
